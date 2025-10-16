@@ -26,6 +26,7 @@ public class ProcessAuto {
     public ProcessAuto() {
     }
 
+    // ------------------- METODO 1 lanzarPrograma -------------------
     /**
      * Lanza una nueva ventana de la terminal de comandos (`cmd.exe`) y ejecuta comandos predefinidos en ella.
      * <p>

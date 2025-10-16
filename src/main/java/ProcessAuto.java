@@ -124,29 +124,52 @@ public class ProcessAuto {
         }
     }
         // METODO 4 parametrosDinamicos
-    public void parametrosDinamicos(String comando, String paquetes, String host){
-        List<String> commandList = new ArrayList<>();
-        commandList.add(comando);
+/**
+ * Ejecuta un comando del sistema de forma dinámica, permitiendo añadir
+ * parámetros opcionales basados en la entrada.
+ * <p>
+ * Este método está diseñado para construir un comando (como 'ping') donde algunos
+ * argumentos, como el número de paquetes, pueden incluirse o no. La salida
+ * del comando ejecutado se mostrará directamente en la consola de esta aplicación.
+ * </p>
+ *
+ * @param comando El comando principal a ejecutar (ej. "ping").
+ * @param paquetes El valor para el parámetro "-n". Si es "N" (o "n"), el parámetro se omite.
+ * @param host El host o dirección IP de destino para el comando.
+ */
+public void parametrosDinamicos(String comando, String paquetes, String host) {
+    // Crea una lista para construir el comando y sus argumentos dinámicamente.
+    List<String> commandList = new ArrayList<>();
+    commandList.add(comando);
 
-        if (!"N".equalsIgnoreCase(paquetes)) {
-            commandList.add("-n");
-            commandList.add(paquetes);
-        }
-        commandList.add(host);
-
-        ProcessBuilder pb = new ProcessBuilder(commandList);
-
-        pb.inheritIO();
-
-        try {
-            System.out.println("Ejecutando comando: " + String.join(" ", commandList));
-            Process p = pb.start();
-            int exitCode = p.waitFor();
-            System.out.println("\nProceso finalizado con código: " + exitCode);
-        } catch (IOException | InterruptedException e) {
-            System.err.println("Error al ejecutar el comando: " + comando);
-        }
+    // Añade el parámetro para el número de paquetes solo si no es "N".
+    // Esto permite que el comando sea flexible.
+    if (!"N".equalsIgnoreCase(paquetes)) {
+        commandList.add("-n"); // El flag que indica el número de paquetes.
+        commandList.add(paquetes);
     }
+    // El host de destino siempre se añade al final.
+    commandList.add(host);
+
+    // Prepara el proceso con la lista de comandos construida.
+    ProcessBuilder pb = new ProcessBuilder(commandList);
+
+    // Redirige la entrada, salida y error del subproceso a la consola actual.
+    // Esto hace que veamos el resultado del ping en tiempo real.
+    pb.inheritIO();
+
+    try {
+        System.out.println("Ejecutando comando: " + String.join(" ", commandList));
+        // Inicia el proceso.
+        Process p = pb.start();
+        // Espera a que el proceso termine y obtiene su código de salida.
+        int exitCode = p.waitFor();
+        System.out.println("\nProceso finalizado con código: " + exitCode);
+    } catch (IOException | InterruptedException e) {
+        // Maneja los posibles errores durante la ejecución.
+        System.err.println("Error al ejecutar el comando: " + e.getMessage());
+    }
+}
 
     // METODO 5
 

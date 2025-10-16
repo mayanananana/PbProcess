@@ -20,7 +20,7 @@ public class Main {
                 case 1: ProcessAuto.lanzarPrograma();
                     break;
                 case 2:
-                    System.out.println("En proceso...");
+                        ProcessAuto.lanzarContadores();
                     break;
                 case 3:
                     redireccionSalida(sc, processAuto);
@@ -44,6 +44,8 @@ public class Main {
         } while (op != 0);
         sc.close();
     }
+
+
 
     private static void ejecutorComandos(Scanner sc) {
         System.out.println("=============================================");

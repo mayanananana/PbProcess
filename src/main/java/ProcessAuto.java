@@ -52,36 +52,55 @@ public class ProcessAuto {
         }
     }
 
-    // METODO 2 lanzarContadores
+    // METODO 2 - lanzarContadores
 
+    /**
+     * Lanza varios contadores en paralelo utilizando hilos.
+     * Cada contador se ejecuta en un hilo separado, lo que permite que se ejecuten de forma concurrente.
+     * Este método, como parte de la clase {@link ProcessAuto}, demuestra la capacidad de la aplicación para gestionar
+     * la ejecución de múltiples tareas simultáneamente, en este caso, representadas por la clase {@link ProcessThreads}.
+     *
+     * La implementación crea un número determinado de instancias de {@link ProcessThreads},
+     * las asigna a nuevos hilos ({@link Thread}) y los inicia.
+     */
+    public static void lanzarContadores() {
+        System.out.println("--- Lanzando contadores en paralelo ---");
 
+        // Número de hilos/contadores que se lanzarán.
+        int numeroDeContadores = 3;
 
-    public void lanzarContadoresEnParalelo() {
-       /* System.out.println("--- Iniciando el método para lanzar contadores en paralelo ---");
+        // Lista para mantener una referencia a los hilos creados.
+        List<Thread> hilos = new ArrayList<>();
 
-        // 1. Creamos las dos tareas que se ejecutarán.
-        //    Usamos la clase 'MiTarea' que está definida más abajo.
-        MiTarea tarea1 = new MiTarea("A");
-        MiTarea tarea2 = new MiTarea("B");
+        for (int i = 1; i <= numeroDeContadores; i++) {
+            // Crea una nueva instancia de la tarea, asignándole un nombre único.
+            ProcessThreads tarea = new ProcessThreads("Contador-" + i);
 
-        // 2. Creamos los "trabajadores" (hilos) y le asignamos una tarea a cada uno.
-        Thread hilo1 = new Thread(tarea1);
-        Thread hilo2 = new Thread(tarea2);
+            // Crea un nuevo hilo y le pasa la tarea a ejecutar.
+            Thread hilo = new Thread(tarea);
 
-        // 3. Damos prioridades. Es una sugerencia para el sistema operativo.
-        //    Le decimos que intente dar más atención al hilo1.
-        hilo1.setPriority(Thread.MAX_PRIORITY);
-        hilo2.setPriority(Thread.MIN_PRIORITY);
+            // Inicia la ejecución del hilo. Esto llama al método run() de la tarea.
+            hilo.start();
 
-        // 4. ¡Damos la orden de empezar! Los hilos arrancan y ejecutan su tarea.
-        System.out.println("Lanzando los hilos. Empezarán a contar ahora...");
-        hilo1.start();
-        hilo2.start();
+            // Añade el hilo a la lista para poder gestionarlo después.
+            hilos.add(hilo);
+        }
 
-        // El hilo principal (el que ha llamado a este método) imprime esto y termina.
-        // ¡Pero los hilos 1 y 2 seguirán trabajando en segundo plano!
-        System.out.println("--- El método 'lanzarContadoresEnParalelo' ha terminado de dar las órdenes ---");
-   */ }
+        // Bucle para esperar a que todos los hilos terminen su ejecución.
+        for (Thread hilo : hilos) {
+            try {
+                // El método join() bloquea la ejecución del hilo actual (el principal)
+                // hasta que el hilo sobre el que se llama (hilo) haya terminado.
+                hilo.join();
+            } catch (InterruptedException e) {
+                System.err.println("El hilo principal fue interrumpido mientras esperaba.");
+                // Restablece el estado de interrupción del hilo principal.
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        System.out.println("--- Todos los contadores han finalizado. ---");
+    }
 
     // METODO 3 redireccionSalida
 

@@ -16,8 +16,6 @@ import java.util.regex.Pattern;
  * Esta clase está diseñada para facilitar la automatización de tareas que requieren
  * la ejecución de herramientas de línea de comandos externas.
  *
- * @author Bruno Coloma
- * @version 1.0
  */
 public class ProcessAuto {
 
@@ -191,7 +189,7 @@ public class ProcessAuto {
         }
     }
 
-    // METODO 5
+    // ------------------- METODO 5 ejecucionComando -------------------
 
     /**
      * Ejecuta un comando del sistema operativo y captura su salida estándar y de error.
@@ -234,6 +232,8 @@ public class ProcessAuto {
         }
         return salida.toString();
     }
+
+    // ------------------- METODO 6 escanerPuertos -------------------
 
     /**
      * Escanea la máquina local en busca de puertos TCP abiertos en estado de "escucha" (LISTENING).

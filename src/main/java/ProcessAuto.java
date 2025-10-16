@@ -10,20 +10,38 @@ import java.util.regex.Pattern;
 
 /**
  * La clase ProcessAuto proporciona métodos para interactuar con procesos del sistema operativo.
+ * <p>
  * Permite lanzar comandos en una nueva terminal, ejecutar procesos en paralelo,
  * redirigir la salida estándar y de error, y ejecutar comandos capturando su salida.
  * Esta clase está diseñada para facilitar la automatización de tareas que requieren
  * la ejecución de herramientas de línea de comandos externas.
+ *
+ * @author Bruno Coloma
+ * @version 1.0
  */
 public class ProcessAuto {
 
+    /**
+     * Constructor por defecto para la clase ProcessAuto.
+     * No realiza ninguna operación especial.
+     */
     public ProcessAuto() {
     }
 
-    // METODO 1 - LanzarPrograma
+    /**
+     * Lanza una nueva ventana de la terminal de comandos (`cmd.exe`) y ejecuta comandos predefinidos en ella.
+     * <p>
+     * Este método construye y ejecuta un comando que utiliza `start cmd.exe /k` para abrir una nueva consola independiente.
+     * El comando `echo` muestra un mensaje de bienvenida y `ipconfig` muestra la configuración de red.
+     * Gracias al argumento `/k`, la nueva ventana de terminal permanecerá abierta después de que los comandos se hayan ejecutado.
+     * <p>
+     * <b>Nota:</b> El método no espera a que la nueva ventana de terminal sea cerrada por el usuario.
+     *
+     * @see ProcessBuilder
+     * @see Process#waitFor()
+     */
     public static void lanzarPrograma(){
         try {
-
             String comandosParaEjecutar = "echo ¡Hola, bienvenido a la terminal! & ipconfig";
             String[] comandoFinal = {
                     "cmd.exe",
@@ -52,13 +70,14 @@ public class ProcessAuto {
         }
     }
 
-    // METODO 2 - lanzarContadores
+    // ------------------- METODO 2 lanzarContadores -------------------
 
     /**
      * Lanza varios contadores en paralelo utilizando hilos.
      * Cada contador se ejecuta en un hilo separado, lo que permite que se ejecuten de forma concurrente.
      * Este método, como parte de la clase {@link ProcessAuto}, demuestra la capacidad de la aplicación para gestionar
      * la ejecución de múltiples tareas simultáneamente, en este caso, representadas por la clase {@link ProcessThreads}.
+     *
      *
      * La implementación crea un número determinado de instancias de {@link ProcessThreads},
      * las asigna a nuevos hilos ({@link Thread}) y los inicia.
@@ -102,8 +121,18 @@ public class ProcessAuto {
         System.out.println("--- Todos los contadores han finalizado. ---");
     }
 
-    // METODO 3 redireccionSalida
+    // ------------------- METODO 3 redireccionSalida -------------------
 
+    /**
+     * Ejecuta un comando del sistema y redirige su salida estándar y de error a ficheros.
+     * La salida estándar del proceso se guarda en `standard_output.txt` y la salida de error en `error.txt`.
+     * Si los ficheros ya existen, su contenido será sobrescrito.
+     *
+     * @param comando El comando del sistema que se va a ejecutar (por ejemplo, "ipconfig" o "ls -l").
+     *                El comando se divide por espacios para separar el programa de sus argumentos.
+     * @see ProcessBuilder#redirectOutput(File)
+     * @see ProcessBuilder#redirectError(File)
+     */
     public void redireccionSalida(String comando){
         // Es más robusto separar el comando y sus argumentos
         ProcessBuilder pb = new ProcessBuilder(comando.split("\\s+"));
@@ -123,7 +152,21 @@ public class ProcessAuto {
             System.err.println("Error al ejecutar el comando: " + comando);
         }
     }
-        // METODO 4 parametrosDinamicos
+
+        // ------------------- METODO 4 parametrosDinamicos -------------------
+    /**
+     * Ejecuta un comando del sistema de forma dinámica, permitiendo añadir
+     * parámetros opcionales basados en la entrada.
+     * <p>
+     * Este método está diseñado para construir un comando (como 'ping') donde algunos
+     * argumentos, como el número de paquetes, pueden incluirse o no. La salida
+     * del comando ejecutado se mostrará directamente en la consola de esta aplicación.
+     * </p>
+     *
+     * @param comando El comando principal a ejecutar (ej. "ping").
+     * @param paquetes El valor para el parámetro "-n". Si es "N" (o "n"), el parámetro se omite.
+     * @param host El host o dirección IP de destino para el comando.
+     */
     public void parametrosDinamicos(String comando, String paquetes, String host){
         List<String> commandList = new ArrayList<>();
         commandList.add(comando);
@@ -192,7 +235,15 @@ public class ProcessAuto {
         return salida.toString();
     }
 
-    // METODO 6
+    /**
+     * Escanea la máquina local en busca de puertos TCP abiertos en estado de "escucha" (LISTENING).
+     * <p>
+     * Ejecuta el comando `netstat -ano`, analiza su salida con una expresión regular para identificar
+     * los puertos relevantes y los imprime en la consola.
+     *
+     * @see Runtime#exec(String)
+     * @see Pattern
+     */
     public static void escanerPuertos() {
 
         System.out.println("Buscando puertos en estado LISTENING");

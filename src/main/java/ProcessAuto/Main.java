@@ -21,7 +21,7 @@ public class Main {
                 case 1: ProcessAuto.lanzarPrograma();
                     break;
                 case 2:
-                        ProcessAuto.lanzarContadores();
+                    ProcessAuto.lanzarContadores();
                     break;
                 case 3:
                     redireccionSalida(sc, processAuto);

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -133,23 +134,29 @@ public class ProcessAuto {
      * @see ProcessBuilder#redirectOutput(File)
      * @see ProcessBuilder#redirectError(File)
      */
-    public void redireccionSalida(String comando){
-        // Es más robusto separar el comando y sus argumentos
+    public void redireccionSalida(String comando) {
         ProcessBuilder pb = new ProcessBuilder(comando.split("\\s+"));
 
-        // Configura la redirección ANTES de iniciar el proceso
-        pb.redirectOutput(new File("standard_output.txt")); // Corregido "standar"
+        // Redirección de salida y error a archivos
+        pb.redirectOutput(new File("standard_output.txt"));
         pb.redirectError(new File("error.txt"));
 
         try {
             System.out.println("Ejecutando comando: '" + comando + "'...");
-            Process p = pb.start();
-            int exitCode = p.waitFor(); // Espera a que termine
+            Process proceso = pb.start();
+
+            // Cerramos el stream de entrada del proceso
+            proceso.getOutputStream().close();
+
+            // Espera sin leer los streams porque ya están redirigidos
+            int exitCode = proceso.waitFor();
+
             System.out.println("Proceso finalizado con código: " + exitCode);
             System.out.println("La salida estándar se ha guardado en 'standard_output.txt'");
             System.out.println("La salida de error se ha guardado en 'error.txt'");
+
         } catch (IOException | InterruptedException e) {
-            System.err.println("Error al ejecutar el comando: " + comando);
+            System.err.println("Error al ejecutar el comando '" + comando + "': " + e.getMessage());
         }
     }
 
@@ -210,7 +217,6 @@ public class ProcessAuto {
         Process p;
         try {
             p = Runtime.getRuntime().exec(comando);
-            p.waitFor();
 
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
@@ -225,6 +231,8 @@ public class ProcessAuto {
                 salida.append(l).append("\n");
 
             }
+
+            p.waitFor();
 
         } catch (IOException | InterruptedException e) {
 
